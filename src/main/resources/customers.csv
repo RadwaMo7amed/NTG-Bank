@@ -1,0 +1,6 @@
+customerId,firstName,middleName,lastName,address1,address2,city,state,postalCode,emailAddress,homePhone,cellPhone,workPhone
+1,Mohamed,Ali,Hassan,123 Nile Street,,Cairo,Cairo,11111,mohamed.ali@example.com,1234567890,9876543210,1231231234
+2,Sara,Hussein,Youssef,456 Tahrir Square,Flat 5,Giza,Giza,22222,sara.hussein@example.com,5556667777,8889990000,4564564567
+3,Omar,Ahmed,Khaled,789 Ramsis St,,Alexandria,Alexandria,33333,omar.ahmed@example.com,4445556666,7778889999,7897897890
+4,Laila,Mohamed,Salem,101 Zamalek,Apt 3B,Cairo,Cairo,44444,laila.salem@example.com,1112223333,4445556666,5555555555
+5,Hany,Saeed,Mostafa,555 Corniche,,Mansoura,Dakahlia,55555,hany.saeed@example.com,2223334444,6667778888,6666666666
