@@ -14,7 +14,6 @@ import java.sql.Timestamp;
 @Table(name = "accounts")
 public class Account {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long accountId;
     private Long currentBalance;
     private Timestamp LastIssueDate;

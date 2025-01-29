@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @Table(name = "transactions")
 public class Transaction {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long transactionId;
     private String description;
     private String creditAmount;
