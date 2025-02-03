@@ -1,11 +1,2 @@
-transactionId,accountId,description,credit,debit,timestamp
-1001,101,Deposit,500.0,0.0,2025-01-15T10:00:00
-1002,101,Withdrawal,0.0,200.0,2025-01-16T14:30:00
-1003,102,Deposit,1000.0,0.0,2025-01-17T09:15:00
-1004,103,Purchase,0.0,300.75,2025-01-18T18:45:00
-1005,104,Transfer,0.0,500.0,2025-01-19T13:10:00
-1006,105,Deposit,200.0,0.0,2025-01-20T10:00:00
-1007,105,Withdrawal,0.0,50.0,2025-01-21T11:00:00
-1008,106,Purchase,0.0,150.0,2025-01-22T15:00:00
-1009,106,Deposit,300.0,0.0,2025-01-23T12:00:00
-1010,103,Transfer,0.0,200.0,2025-01-24T14:00:00
+transactionId,accountId,description,creditAmount,creditAmount,timestamp
+1001,101,Deposit,500.0,0.0,2024-01-01 01:03:02

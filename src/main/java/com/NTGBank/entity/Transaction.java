@@ -3,6 +3,7 @@ package com.NTGBank.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
@@ -16,11 +17,13 @@ import java.time.LocalDateTime;
 public class Transaction {
     @Id
     private Long transactionId;
+    private Long accountId;
     private String description;
-    private String creditAmount;
-    private String debitAmount;
-    private Timestamp timestamp;
-    @ManyToOne
-    @JoinColumn(name = "accountId")
-    private Account account;
+    private Double creditAmount;
+    private Double debitAmount;
+    private LocalDateTime  timestamp;
+
+//    @ManyToOne
+//    @JoinColumn(name = "accountId")
+//    private Account account;
 }

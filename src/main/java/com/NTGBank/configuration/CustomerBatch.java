@@ -1,6 +1,7 @@
 package com.NTGBank.configuration;
 
 import com.NTGBank.entity.Customer;
+import com.NTGBank.processor.CustomerProcessor;
 import com.NTGBank.repository.CustomerRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -20,13 +21,12 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
-
 @Configuration
 @AllArgsConstructor
-public class SpringBatchConfig {
+public class CustomerBatch {
     private CustomerRepo customerRepo;
-    //Customer Is the entity
-    public FlatFileItemReader<Customer> itemReader(){
+    @Bean
+    public FlatFileItemReader<Customer> customerItemReader(){
         //object//
         FlatFileItemReader<Customer>itemReader=new FlatFileItemReader<>();
         //Resource I will read from it
@@ -42,7 +42,7 @@ public class SpringBatchConfig {
 
     private LineMapper<Customer> lineMapper() {
         //it takes a tokenizer and filedMapper
-        DefaultLineMapper<Customer>lineMapper=new DefaultLineMapper<>();
+        DefaultLineMapper<Customer> lineMapper=new DefaultLineMapper<>();
         DelimitedLineTokenizer tokenizer=new DelimitedLineTokenizer();
         tokenizer.setDelimiter(",");//separator is comma
         tokenizer.setNames("customerId","firstName","middleName","lastName","address1","address2","city","state","postalCode","email","homePhone","cellPhone","workPhone");//Header of csv file
@@ -54,12 +54,13 @@ public class SpringBatchConfig {
         lineMapper.setFieldSetMapper(mapper);
         return lineMapper;
     }
+
     @Bean
-    public CustomerProcessor processor(){
+    public CustomerProcessor customerProcessor() {
         return new CustomerProcessor();
     }
     @Bean
-    public RepositoryItemWriter<Customer>itemWriter(){
+    public RepositoryItemWriter<Customer> CustomerItemWriter(){
         //object
         RepositoryItemWriter<Customer>itemWriter=new RepositoryItemWriter<>();
         //Find The Repository
@@ -69,30 +70,28 @@ public class SpringBatchConfig {
         return itemWriter;
     }
     @Bean
-    public Job job (PlatformTransactionManager tx, JobRepository jobRepository){
-        return new JobBuilder("csv-Job",jobRepository)
-                .flow(step(jobRepository,tx))//the step we make 👇
-                .end()
-                .build();
-    }
-    @Bean
-    public Step step(JobRepository jobRepository,
-                     PlatformTransactionManager tx){
+    public Step customerStep(JobRepository jobRepository,
+                             PlatformTransactionManager tx){
         return new StepBuilder("csv-Step",jobRepository)
                 .<Customer,Customer>chunk(10,tx)
-                .reader(itemReader())
-                .processor(processor())//it expected item processor which have <customer,customer> so we write at the chunk <customer,customer>//the processor we make 👆
-                .writer(itemWriter())
+                .reader(customerItemReader())
+                .processor((customerProcessor()))//it expected item processor which have <customer,customer> so we write at the chunk <customer,customer>//the processor we make 👆
+                .writer(CustomerItemWriter())
                 .allowStartIfComplete(true)
                 .taskExecutor(taskExecutor())//to make this task synchronize
                 .build();
     }
-
     private TaskExecutor taskExecutor() {
         SimpleAsyncTaskExecutor asyncTaskExecutor=new SimpleAsyncTaskExecutor();
         //set cryptocurrency how many trades should be given at this point
         asyncTaskExecutor.setConcurrencyLimit(1);
         return asyncTaskExecutor;
     }
-
+    @Bean
+    public Job customerJob (PlatformTransactionManager tx, JobRepository jobRepository){
+        return new JobBuilder("customer-csv-Job",jobRepository)
+                .flow(customerStep(jobRepository,tx))//the step we make 👇
+                .end()
+                .build();
+    }
 }
