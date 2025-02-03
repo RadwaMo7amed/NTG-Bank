@@ -35,7 +35,7 @@ public class TransactionBatch {
     public FlatFileItemReader<Transaction> transactionItemReader() {
         FlatFileItemReader<Transaction> reader = new FlatFileItemReader<>();
         reader.setLinesToSkip(1);
-        reader.setResource(new FileSystemResource("src/main/resources/transactions.csv"));
+        reader.setResource(new FileSystemResource("src/main/resources/transactions1.csv"));
         DefaultLineMapper<Transaction> lineMapper = new DefaultLineMapper<>();
         DelimitedLineTokenizer tokenizer = new DelimitedLineTokenizer();
 //        tokenizer.setNames("accountId", "transactionId","description", "creditAmount","debitAmount", "timestamp");
@@ -50,7 +50,19 @@ public class TransactionBatch {
                 LocalDateTime.class, new PropertyEditorSupport() {
                     @Override
                     public void setAsText(String text) {
-                        setValue(LocalDateTime.parse(text, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                        // Remove single quotes if present
+                        if (text != null && text.startsWith("'") && text.endsWith("'")) {
+                            text = text.substring(1, text.length() - 1); // Remove the quotes
+                        }
+                        // Parse the cleaned-up date, handle optional seconds
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm[:ss]");
+                        try {
+                            setValue(LocalDateTime.parse(text, formatter));
+                        } catch (Exception e) {
+                            // If parsing fails, try without seconds
+                            formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                            setValue(LocalDateTime.parse(text, formatter));
+                        }
                     }
                 }
         ));

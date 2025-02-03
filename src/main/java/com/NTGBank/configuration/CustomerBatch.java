@@ -30,7 +30,7 @@ public class CustomerBatch {
         //object//
         FlatFileItemReader<Customer>itemReader=new FlatFileItemReader<>();
         //Resource I will read from it
-        itemReader.setResource(new FileSystemResource("src/main/resources/customers.csv"));
+        itemReader.setResource(new FileSystemResource("src/main/resources/customers v2.0.csv"));
         //name of it
         itemReader.setName("csv-reader");
         //skip first line it will be header
