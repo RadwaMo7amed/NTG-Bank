@@ -1,5 +1,6 @@
 package com.NTGBank.configuration;
 
+import com.NTGBank.entity.Account;
 import com.NTGBank.entity.Customer;
 import com.NTGBank.processor.CustomerProcessor;
 import com.NTGBank.repository.CustomerRepo;
@@ -21,6 +22,10 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import java.math.BigInteger;
+import java.time.LocalDateTime;
+
 @Configuration
 @AllArgsConstructor
 public class CustomerBatch {
@@ -30,7 +35,7 @@ public class CustomerBatch {
         //object//
         FlatFileItemReader<Customer>itemReader=new FlatFileItemReader<>();
         //Resource I will read from it
-        itemReader.setResource(new FileSystemResource("src/main/resources/customers v2.0.csv"));
+        itemReader.setResource(new FileSystemResource("src/main/resources/customerData.csv"));
         //name of it
         itemReader.setName("csv-reader");
         //skip first line it will be header
@@ -45,13 +50,36 @@ public class CustomerBatch {
         DefaultLineMapper<Customer> lineMapper=new DefaultLineMapper<>();
         DelimitedLineTokenizer tokenizer=new DelimitedLineTokenizer();
         tokenizer.setDelimiter(",");//separator is comma
-        tokenizer.setNames("customerId","firstName","middleName","lastName","address1","address2","city","state","postalCode","email","homePhone","cellPhone","workPhone");//Header of csv file
+        tokenizer.setIncludedFields(0,1,2,3,4,5,6,7,8,9,10,11,12,13);
+        tokenizer.setNames("customerId","accountId","firstName","middleName","lastName","address1","address2","city","state","postalCode","email","homePhone","callPhone","workPhone");//Header of csv file
         tokenizer.setStrict(false);
         lineMapper.setLineTokenizer(tokenizer);
-        BeanWrapperFieldSetMapper<Customer> mapper=new BeanWrapperFieldSetMapper<>();
         //assign to my class
-        mapper.setTargetType(Customer.class);
-        lineMapper.setFieldSetMapper(mapper);
+        lineMapper.setFieldSetMapper(fieldSet -> {
+            Customer customer=new Customer();
+            customer.setCustomerId(Long.parseLong(fieldSet.readString("customerId")));
+            customer.setFirstName(fieldSet.readString("firstName"));
+            customer.setMiddleName(fieldSet.readString("middleName"));
+            customer.setLastName(fieldSet.readString("lastName"));
+            customer.setAddress1(fieldSet.readString("address1"));
+            customer.setAddress2(fieldSet.readString("address2"));
+            customer.setCity(fieldSet.readString("city"));
+            customer.setState(fieldSet.readString("state"));
+            customer.setPostalCode(fieldSet.readString("postalCode"));
+            customer.setEmail(fieldSet.readString("email"));
+            customer.setHomePhone(fieldSet.readString("homePhone"));
+            customer.setCallPhone(fieldSet.readString("callPhone"));
+            customer.setWorkPhone(fieldSet.readString("workPhone"));
+            Account account=new Account();
+            account.setAccountId(Long.parseLong(fieldSet.readString("accountId")));
+            account.setCurrentBalance(0.0);
+            account.setLastStatementDate(LocalDateTime.now());
+            account.setCustomer(customer);
+
+
+            customer.getAccounts().add(account);
+            return customer;
+        });
         return lineMapper;
     }
 
@@ -69,6 +97,7 @@ public class CustomerBatch {
         itemWriter.setMethodName("save");
         return itemWriter;
     }
+
     @Bean
     public Step customerStep(JobRepository jobRepository,
                              PlatformTransactionManager tx){

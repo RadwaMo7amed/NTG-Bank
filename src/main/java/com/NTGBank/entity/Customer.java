@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -16,6 +17,8 @@ import java.util.List;
 @Table(name = "customers")
 public class Customer {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     private Long customerId;
     private String firstName;
     private String middleName;
@@ -29,4 +32,6 @@ public class Customer {
     private String homePhone;
     private String callPhone;
     private String workPhone;
+    @OneToMany(mappedBy = "customer" ,cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Account> accounts=new ArrayList<>();
 }

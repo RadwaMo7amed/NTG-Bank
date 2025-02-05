@@ -17,13 +17,12 @@ import java.time.LocalDateTime;
 public class Transaction {
     @Id
     private Long transactionId;
-    private Long accountId;
     private String description;
     private Double creditAmount;
     private Double debitAmount;
     private LocalDateTime  timestamp;
 
-//    @ManyToOne
-//    @JoinColumn(name = "accountId")
-//    private Account account;
+    @ManyToOne
+    @JoinColumn(name = "accountId")
+    private Account account;
 }

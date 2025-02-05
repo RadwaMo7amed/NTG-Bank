@@ -5,7 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Entity
@@ -15,9 +16,15 @@ import java.sql.Timestamp;
 public class Account {
     @Id
     private Long accountId;
-    private Long currentBalance;
-    private Timestamp LastIssueDate;
+    private Double currentBalance;
+    private LocalDateTime lastStatementDate;//    private Timestamp LastIssueDate;
+
+
     @ManyToOne
     @JoinColumn(name = "customerId")
     private Customer customer;
+
+    @OneToMany(mappedBy = "account",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transaction> transactions;
+
 }
