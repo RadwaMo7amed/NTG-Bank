@@ -32,6 +32,6 @@ public class Customer {
     private String homePhone;
     private String callPhone;
     private String workPhone;
-    @OneToMany(mappedBy = "customer" ,cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "customer" ,cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.EAGER)
     private List<Account> accounts=new ArrayList<>();
 }

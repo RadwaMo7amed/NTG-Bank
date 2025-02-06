@@ -24,7 +24,7 @@ public class Account {
     @JoinColumn(name = "customerId")
     private Customer customer;
 
-    @OneToMany(mappedBy = "account",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "account",fetch = FetchType.EAGER,cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transaction> transactions;
 
 }
